@@ -1,27 +1,33 @@
+package 구현;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.Arrays;
-import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.StringTokenizer;
 
-public class Main_25305 {
+public class Main_14425 {
     public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
+
         int N = Integer.parseInt(st.nextToken());
-        int k = Integer.parseInt(st.nextToken());
+        int M = Integer.parseInt(st.nextToken());
 
-        Integer[] scores = new Integer[N];
+        int answer = 0;
+        HashMap<String, Boolean> map = new HashMap<>();
 
-        st = new StringTokenizer(br.readLine());
         for(int i=0;i<N;i++){
-            scores[i] = Integer.parseInt(st.nextToken());
+            map.put(br.readLine(), true);
         }
 
-        Arrays.sort(scores, Collections.reverseOrder());
+        for(int i=0;i<M;i++){
+            if(map.containsKey(br.readLine()))
+                answer++;
+        }
 
-        System.out.println(scores[k-1]);
+        System.out.println(answer);
 
     }
 }
