@@ -1,3 +1,5 @@
+package 분할정복;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -8,28 +10,32 @@ import java.util.StringTokenizer;
 
 public class Main_17401 {
 
-    public static class Matrix{
-        long[][] mat = new long[N][N];
-
-        Matrix(long[][] mat){
-            this.mat = mat;
+    public static void print(long[][] a){
+        System.out.println("---------------------");
+        for(int i=0;i<N;i++){
+            for(int j=0;j<N;j++){
+                System.out.print(a[i][j]+" " );
+            }
+            System.out.println();
         }
-
+        System.out.println();
     }
-    public static Matrix mul(Matrix a, Matrix b){
+    public static long[][] mul(long[][] a, long[][] b){
         long [][] temp = new long[N][N];
         for(int i=0;i<N;i++){
             for(int j=0;j<N;j++){
                 for(int k=0;k<N;k++){
-                    temp[i][j] += (a.mat[i][k]*b.mat[k][j]) % 1000000007;
+                    temp[i][j] += a[i][k]*b[k][j];
+                    temp[i][j] %= 1000000007;
                 }
             }
         }
 
-        return new Matrix(temp);
+        return temp;
     }
     static int N, D;
-        public static void main(String[] args) throws IOException {
+    static int cnt;
+    public static void main(String[] args) throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
 
@@ -37,7 +43,7 @@ public class Main_17401 {
         N = Integer.parseInt(st.nextToken());
         D = Integer.parseInt(st.nextToken());
 
-        List<Matrix> matList = new ArrayList<>();
+        long[][][] matList = new long[T][N][N];
 
         for(int t=0;t<T;t++){
             long[][] temp = new long[N][N];
@@ -51,57 +57,60 @@ public class Main_17401 {
                 temp[a][b] = c;
             }
 
-            matList.add(new Matrix(temp));
+            matList[t] = temp;
         }
 
+        cnt = 0;
         int t = D / T;
         int r = D % T;
 
-        Matrix ansMat = matList.get(0);
-            // 한바퀴 안돌 때
-        if(t == 0){
-            for(int i=1;i<D;i++){
+        long[][] ans = new long[N][N];
 
-                ansMat = mul(ansMat,matList.get(i));
-            }
-        }else{
-
-            for(int i=1;i<T;i++){
-                ansMat = mul(ansMat,matList.get(i));
-            }
-
-
-            ansMat = powMat(ansMat, t);
-
-            for(int i=0;i<r;i++){
-                ansMat = mul(ansMat,matList.get(i));
-            }
+        for(int i=0;i<N;i++){
+            ans[i][i] = 1;
         }
 
+        for(int i=0;i<T;i++){
+            ans = mul(ans, matList[i]);
+        }
+
+        ans = powMat(ans, t);
+
+        for(int i=0;i<r;i++){
+            ans = mul(ans, matList[i]);
+        }
 
         StringBuilder sb = new StringBuilder();
 
         for(int i=0;i<N;i++){
             for(int j=0;j<N;j++){
-                sb.append(ansMat.mat[i][j]+" ");
+                sb.append(ans[i][j]+" ");
             }
             sb.append("\n");
         }
 
-            System.out.print(sb);
+        System.out.print(sb);
 
     }
 
-    public static Matrix powMat(Matrix a, int n){
+    public static long[][] powMat(long[][] a, int n){
 
-            if(n == 2){
-                return mul(a,a);
-            }else if( n==1){
-                return a;
+        long[][] temp = new  long[N][N];
+        if(n==0){
+            for(int i=0;i<N;i++){
+                temp[i][i] = 1;
             }
+            return temp;
+        }
 
-            Matrix b = mul(powMat(a,n/2), powMat(a, n/2));
-
-            return b;
+        if(n==1){
+            return a;
+        }
+        temp = powMat(a, n/2);
+        temp = mul(temp, temp);
+        if(n % 2== 1){
+            temp = mul(temp, a);
+        }
+        return temp;
     }
 }
