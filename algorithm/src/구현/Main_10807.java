@@ -22,7 +22,8 @@ public class Main_10807 {
 
         int v = Integer.parseInt(br.readLine());
 
-        System.out.println(map.get(v));
+        if(!map.containsKey(v)) System.out.println(0);
+        else System.out.println(map.get(v));
 
     }
 }
